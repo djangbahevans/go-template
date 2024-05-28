@@ -37,7 +37,12 @@ func (u *UserRoutes) GetUsers(w http.ResponseWriter, r *http.Request) {
 func (u *UserRoutes) GetUser(w http.ResponseWriter, r *http.Request) {
 	id := utils.GetIDFromURL(r)
 	user, err := u.userService.GetUser(id)
-	if err != nil {
+	switch err {
+	case nil:
+	case utils.ErrUserNotFound:
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	default:
 		log.Printf("error getting user: %v", err)
 		http.Error(w, "error getting user", http.StatusInternalServerError)
 		return
@@ -56,11 +61,12 @@ func (u *UserRoutes) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newUser, err := u.userService.CreateUser(user)
-	if err != nil {
-		if err == utils.ErrEmailExists {
-			http.Error(w, "email already exists", http.StatusBadRequest)
-			return
-		}
+	switch err {
+	case nil:
+	case utils.ErrEmailExists, utils.ErrFirstNameRequired, utils.ErrLastNameRequired, utils.ErrEmailRequired, utils.ErrPasswordRequired:
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
+	default:
 		log.Printf("error creating user: %v", err)
 		http.Error(w, "error creating user", http.StatusInternalServerError)
 		return
@@ -80,7 +86,12 @@ func (u *UserRoutes) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	updatedUser, err := u.userService.UpdateUser(id, user)
-	if err != nil {
+	switch err {
+	case nil:
+	case utils.ErrUserNotFound, utils.ErrEmailExists, utils.ErrFirstNameRequired, utils.ErrLastNameRequired, utils.ErrEmailRequired, utils.ErrPasswordRequired:
+		http.Error(w, err.Error(), http.StatusConflict)
+		return
+	default:
 		log.Printf("error updating user: %v", err)
 		http.Error(w, "error updating user", http.StatusInternalServerError)
 		return
@@ -92,7 +103,12 @@ func (u *UserRoutes) UpdateUser(w http.ResponseWriter, r *http.Request) {
 func (u *UserRoutes) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	id := utils.GetIDFromURL(r)
 	err := u.userService.DeleteUser(id)
-	if err != nil {
+	switch err {
+	case nil:
+	case utils.ErrUserNotFound:
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
+	default:
 		log.Printf("error deleting user: %v", err)
 		http.Error(w, "error deleting user", http.StatusInternalServerError)
 		return
