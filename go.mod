@@ -3,7 +3,6 @@ module github.com/djangbahevans/go-template
 go 1.22.3
 
 require (
-	github.com/joho/godotenv v1.5.1
 	github.com/spf13/viper v1.18.2
 	go.uber.org/fx v1.21.1
 	golang.org/x/crypto v0.23.0
