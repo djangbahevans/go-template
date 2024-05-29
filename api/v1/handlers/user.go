@@ -4,23 +4,26 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/djangbahevans/go-template/api"
 	"github.com/djangbahevans/go-template/models"
 	"github.com/djangbahevans/go-template/services"
 	"github.com/djangbahevans/go-template/utils"
 )
 
 type UserRoutes struct {
-	userService services.UserService
+	userService services.IUserService
 }
 
-func RegisterUserRoutes(r *http.ServeMux, userService services.UserService) {
-	userHandler := &UserRoutes{userService}
+func NewUserRoutes(userService services.IUserService) *UserRoutes {
+	return &UserRoutes{userService: userService}
+}
 
-	r.HandleFunc("GET /users", userHandler.GetUsers)
-	r.HandleFunc("GET /users/{id}", userHandler.GetUser)
-	r.HandleFunc("POST /users", userHandler.CreateUser)
-	r.HandleFunc("PUT /users/{id}", userHandler.UpdateUser)
-	r.HandleFunc("DELETE /users/{id}", userHandler.DeleteUser)
+func (u *UserRoutes) RegisterRoutes(r *http.ServeMux, _ ...api.IRoutes) {
+	r.HandleFunc("GET /users", u.GetUsers)
+	r.HandleFunc("GET /users/{id}", u.GetUser)
+	r.HandleFunc("POST /users", u.CreateUser)
+	r.HandleFunc("PUT /users/{id}", u.UpdateUser)
+	r.HandleFunc("DELETE /users/{id}", u.DeleteUser)
 }
 
 func (u *UserRoutes) GetUsers(w http.ResponseWriter, r *http.Request) {

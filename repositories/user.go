@@ -2,7 +2,7 @@ package repositories
 
 import "github.com/djangbahevans/go-template/models"
 
-type UserRepository interface {
+type IUserRepository interface {
 	CreateUser(user *models.User) error
 	GetUser(id string) (*models.User, error)
 	GetUserByEmail(email string) (*models.User, error)

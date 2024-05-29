@@ -3,13 +3,16 @@ package v1
 import (
 	"net/http"
 
-	"github.com/djangbahevans/go-template/api/v1/handlers"
-	"github.com/djangbahevans/go-template/services"
+	"github.com/djangbahevans/go-template/api"
 )
 
-func RegisterV1Routes(r *http.ServeMux, userService services.UserService) {
+type V1Router struct{}
+
+func (*V1Router) RegisterRoutes(r *http.ServeMux, routes ...api.IRoutes) {
 	v1 := http.NewServeMux()
-	handlers.RegisterUserRoutes(v1, userService)
+	for _, route := range routes {
+		route.RegisterRoutes(v1)
+	}
 
 	r.Handle("/v1/", http.StripPrefix("/v1", v1))
 }

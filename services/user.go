@@ -6,7 +6,7 @@ import (
 	"github.com/djangbahevans/go-template/utils"
 )
 
-type UserService interface {
+type IUserService interface {
 	GetUsers() ([]models.UserResponse, error)
 	GetUser(id string) (*models.UserResponse, error)
 	CreateUser(user models.CreateUserRequest) (*models.UserResponse, error)
@@ -15,10 +15,10 @@ type UserService interface {
 }
 
 type userService struct {
-	userRepository repositories.UserRepository
+	userRepository repositories.IUserRepository
 }
 
-func NewUserService(userRepository repositories.UserRepository) UserService {
+func NewUserService(userRepository repositories.IUserRepository) IUserService {
 	return &userService{
 		userRepository: userRepository,
 	}

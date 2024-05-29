@@ -1,5 +1,5 @@
 package repositories
 
-type Respository interface {
-	UserRepository
+type IRespository interface {
+	IUserRepository
 }
