@@ -4,7 +4,6 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/djangbahevans/go-template/api"
 	"github.com/djangbahevans/go-template/models"
 	"github.com/djangbahevans/go-template/services"
 	"github.com/djangbahevans/go-template/utils"
@@ -18,7 +17,7 @@ func NewUserRoutes(userService services.IUserService) *UserRoutes {
 	return &UserRoutes{userService: userService}
 }
 
-func (u *UserRoutes) RegisterRoutes(r *http.ServeMux, _ ...api.IRoutes) {
+func (u *UserRoutes) RegisterRoutes(r *http.ServeMux) {
 	r.HandleFunc("GET /users", u.GetUsers)
 	r.HandleFunc("GET /users/{id}", u.GetUser)
 	r.HandleFunc("POST /users", u.CreateUser)

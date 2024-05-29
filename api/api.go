@@ -4,16 +4,19 @@ import (
 	"net/http"
 )
 
-type Api struct{}
-
-func NewApi() *Api {
-	return &Api{}
+type Api struct {
+	routes []IRoute
 }
 
-func (*Api) RegisterRoutes(r *http.ServeMux, routes ...IRoutes) {
-	api := http.NewServeMux()
-	for _, route := range routes {
-		route.RegisterRoutes(r)
+func NewApi(routes ...IRoute) *Api {
+	return &Api{routes}
+}
+
+func (router *Api) RegisterRoutes(r *http.ServeMux) {
+	mux := http.NewServeMux()
+	for _, route := range router.routes {
+		route.RegisterRoutes(mux)
 	}
-	r.Handle("/api/", http.StripPrefix("/api", api))
+
+	r.Handle("/api/", http.StripPrefix("/api", mux))
 }

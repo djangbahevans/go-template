@@ -1,32 +1,44 @@
 package config
 
 import (
-	"os"
-
 	"github.com/joho/godotenv"
+	"github.com/spf13/viper"
 )
 
-var (
-	DBName     string
-	DBUser     string
-	DBPass     string
-	DBHost     string
-	DBPort     string
+type Config struct {
 	ServerAddr string
-)
+	DbHost     string
+	DbPort     string
+	DbName     string
+	DbUser     string
+	DbPassword string
+}
 
-func LoadConfig() {
-	godotenv.Load()
+func LoadConfig() error {
+	err := godotenv.Load()
+	if err != nil {
+		return err
+	}
 
-	DBName = os.Getenv("DB_NAME")
-	DBUser = os.Getenv("DB_USER")
-	DBPass = os.Getenv("DB_PASS")
-	DBHost = os.Getenv("DB_HOST")
-	DBPort = os.Getenv("DB_PORT")
-	ServerAddr = os.Getenv("SERVER_ADDR")
+	viper.AutomaticEnv()
+	viper.AddConfigPath(".")
+	viper.SetConfigType("env")
+	viper.SetConfigName(".env")
 
-	// Validate the environment variables
-	if ServerAddr == "" {
-		ServerAddr = ":8080"
+	if err := viper.ReadInConfig(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func GetConfig() *Config {
+	return &Config{
+		ServerAddr: viper.GetString("SERVER_ADDR"),
+		DbHost:     viper.GetString("DB_HOST"),
+		DbPort:     viper.GetString("DB_PORT"),
+		DbName:     viper.GetString("DB_NAME"),
+		DbUser:     viper.GetString("DB_USER"),
+		DbPassword: viper.GetString("DB_PASSWORD"),
 	}
 }

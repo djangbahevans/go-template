@@ -6,11 +6,17 @@ import (
 	"github.com/djangbahevans/go-template/api"
 )
 
-type V1Router struct{}
+type V1Router struct {
+	routes []api.IRoute
+}
 
-func (*V1Router) RegisterRoutes(r *http.ServeMux, routes ...api.IRoutes) {
+func NewV1Router(routes ...api.IRoute) *V1Router {
+	return &V1Router{routes: routes}
+}
+
+func (router *V1Router) RegisterRoutes(r *http.ServeMux) {
 	v1 := http.NewServeMux()
-	for _, route := range routes {
+	for _, route := range router.routes {
 		route.RegisterRoutes(v1)
 	}
 
