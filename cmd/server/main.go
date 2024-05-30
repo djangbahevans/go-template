@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/djangbahevans/go-template/api"
@@ -60,9 +60,9 @@ func main() {
 			lc.Append(fx.Hook{
 				OnStart: func(ctx context.Context) error {
 					go func() {
-						fmt.Printf("Starting server on %s\n", srv.Addr)
+						log.Printf("Starting server on %s\n", srv.Addr)
 						if err := srv.ListenAndServe(); err != nil {
-							fmt.Println(err)
+							log.Println(err)
 						}
 					}()
 					return nil
