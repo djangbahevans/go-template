@@ -20,6 +20,7 @@ func main() {
 	config.LoadConfig()
 
 	fx.New(
+		fx.NopLogger,
 		fx.Provide(
 			fx.Annotate(
 				config.GetConfig,
@@ -81,10 +82,17 @@ func NewHttpServer(cfg *config.Config, routes ...api.IRoute) *http.Server {
 		route.RegisterRoutes(api)
 	}
 
+	api.HandleFunc("/health", HealthCheck)
+
 	server := &http.Server{
 		Addr:    cfg.ServerAddr,
 		Handler: middleware.ApplyMiddleware(api, middleware.Logger),
 	}
 
 	return server
+}
+
+func HealthCheck(w http.ResponseWriter, r *http.Request) {
+	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("OK"))
 }
